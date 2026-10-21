@@ -11,6 +11,7 @@ pnpm monorepo: Hono + oRPC API (`apps/server`), Vite dashboard (`apps/web`), Ast
 1. `pnpm install` (generates the typed env files from every `.env.schema`).
 2. Secrets (gitignored):
    - `apps/server/.env` → `BETTER_AUTH_SECRET` (`openssl rand -base64 32`), and optionally `DEMO_RESET_SECRET` to enable the demo reset
+   - `apps/server/.env` → optionally `ATOMICMEMORY_API_URL` and `ATOMICMEMORY_API_KEY` to turn on [route notes](#route-notes-optional-atomic-memory)
    - `packages/db/.env` → `DATABASE_URL` for your own MySQL 8.4, for example a local Docker `mysql:8.4` instance
    - `apps/server/.env` and `apps/fleet-sync/.env` → the same `CREDENTIALS_ENCRYPTION_KEY` (`openssl rand -base64 32`)
    - `apps/fleet-sync/.env` → `FLEET_SYNC_RUN_SECRET` (`openssl rand -base64 32`)
@@ -62,6 +63,16 @@ Every server route requires a session except `/`, `/api/auth/*`, public `POST /a
 "Probar demo" on the marketing site opens `/demo` on its configured dashboard URL, which signs the visitor into the shared `demo@illapa.app` account through `/api/auth/demo/sign-in` (no password, 120 sign-ins per minute per IP) and seeds its demo fleet and two demo trips on first use. A visitor already signed in with their own account is asked before the demo replaces it: they can keep that account or sign out and open the demo. The endpoint itself refuses (409) to replace a real account's session. Once every trip of the demo account is completed or cancelled, the next fleet-sync run or `/demo` visit restarts the demo with the same wipe and reseed as the reset below. The demo account cannot change its email, password, sessions or organization, and can only add demo GPS connections.
 
 The reset endpoint is off unless the server has `DEMO_RESET_SECRET` set (add it before deploying when you need it). To restart it on demand, for example while a trip is still running, use `DEMO_RESET_SECRET=… DEMO_RESET_URL="$API_URL/api/demo/reset" pnpm demo:reset` (`API_URL` is the target environment's API origin). Without `DEMO_RESET_URL` it targets the local server. It deletes the demo organization's alerts, trips, vehicles and connections and seeds them again.
+
+## Route notes (optional, Atomic Memory)
+
+On **Revisar ruta** and on a trip's page, an operator can keep one short reviewed note per origin → destination pair, such as "Neblina en Ticlio antes de las 6:00". It only shows to that operator. It is saved only after they tick the consent box, they can correct or delete it, and it never changes the risk index or the recommendation.
+
+The notes are off until `apps/server/.env` has both `ATOMICMEMORY_API_URL` and `ATOMICMEMORY_API_KEY`. That can be Atomic Memory Cloud (`https://api.atomicstrata.ai` with a project API key) or a local Atomic Memory Core (`http://127.0.0.1:17350` with its `CORE_API_KEY`). The URL must be HTTPS (plain HTTP only on `127.0.0.1`, `localhost` or `[::1]`) with no user, password, query or fragment; requests never follow redirects. A bad or partial value only turns the notes off and adds `routeNotes.config: "invalid"` to the request log; the server still starts. When either value is missing, the card does not show, and route review, trips and alerts work as before. The card is also skipped when Atomic Memory is slow or down: it says the note could not be read, and route review still works.
+
+- Each note is stored under the signed-in user and organization (`illapa:<organizationId>:<userId>`). The shared demo account stores notes under the visitor's session (`illapa-demo-session:<sessionId>`), so the next visitor never sees them.
+- Each note has the external id `illapa-route-note:<subject>:<origin>:<destination>`. A correction re-ingests that id (`POST /v1/memories/ingest/quick`, verbatim with `skip_extraction`), and notes are read and deleted by that id (`GET /v1/memories/by-external-id/…`, `DELETE /v1/memories/:id`), never through semantic search.
+- A save is reported only when Atomic Memory returns the stored or updated record id and the same text reads back. Otherwise the operator is told it could not be confirmed. A deletion is reported only once the note no longer reads back. Each operation, including its readback, gets one 4-second budget. Local demo evidence (screenshots and video) is in [docs/media/route-notes](docs/media/route-notes/README.md).
 
 ## Dashboard and fleet tracking
 

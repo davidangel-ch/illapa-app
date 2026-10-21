@@ -43,6 +43,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
+import { RouteNotePanel } from "@/components/route-note-panel";
 import {
 	ROUTE_REVIEW_DEPARTURE_LEAD_MS,
 	ROUTE_REVIEW_DEPARTURE_STEP_MS,
@@ -318,6 +319,12 @@ function RouteReviewPage() {
 					/>
 				</div>
 				<div className="order-3 flex flex-col gap-4 p-4">
+					{value.originPlaceId !== value.destinationPlaceId ? (
+						<RouteNotePanel
+							originPlaceId={value.originPlaceId}
+							destinationPlaceId={value.destinationPlaceId}
+						/>
+					) : null}
 					{vehiclesQuery.isError ? (
 						<Alert variant="destructive">
 							<AlertTitle>{m.route_review_vehicle_error()}</AlertTitle>

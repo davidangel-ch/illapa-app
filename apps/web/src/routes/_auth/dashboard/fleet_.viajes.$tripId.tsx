@@ -28,6 +28,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { RouteNotePanel } from "@/components/route-note-panel";
 import {
 	ROUTE_REVIEW_MAP_CASING_WIDTH_PX,
 	ROUTE_REVIEW_MAP_COMPACT_HEIGHT_PX,
@@ -335,6 +336,10 @@ function PlannedTripPage() {
 							</AlertDescription>
 						</Alert>
 					) : null}
+					<RouteNotePanel
+						originPlaceId={trip.originPlaceId}
+						destinationPlaceId={trip.destinationPlaceId}
+					/>
 					{!canEdit || departurePassed ? (
 						<Button
 							variant="outline"

@@ -8,6 +8,7 @@ import { incidentsRouter } from "./incidents";
 import { newsRouter } from "./news";
 import { poisRouter } from "./pois";
 import { riskRouter } from "./risk";
+import { routeNotesRouter } from "./route-notes";
 import { routeReviewRouter } from "./route-review";
 import { tripsRouter } from "./trips";
 import { vehiclesRouter } from "./vehicles";
@@ -23,6 +24,7 @@ export const appRouter = {
 	demo: demoRouter,
 	risk: riskRouter,
 	routeReview: routeReviewRouter,
+	routeNotes: routeNotesRouter,
 	healthCheck: publicProcedure.handler(() => {
 		return "OK";
 	}),

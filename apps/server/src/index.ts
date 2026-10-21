@@ -2,6 +2,7 @@ import { PUBLIC_PROCEDURE_PATHS } from "@hack-the-andes-project/api/constants";
 import type { Context as ApiContext } from "@hack-the-andes-project/api/context";
 import { handleDemoRequest } from "@hack-the-andes-project/api/demo-request";
 import { resetDemo } from "@hack-the-andes-project/api/demo-reset";
+import { parseAtomicMemorySetup } from "@hack-the-andes-project/api/route-notes";
 import { appRouter } from "@hack-the-andes-project/api/routers/index";
 import { proxySimulatorRequest } from "@hack-the-andes-project/api/simulator-proxy";
 import {
@@ -252,6 +253,10 @@ app.use("/*", async (c, next) => {
 		return next();
 	}
 
+	const atomicMemorySetup = parseAtomicMemorySetup({
+		apiUrl: ENV.ATOMICMEMORY_API_URL,
+		apiKey: ENV.ATOMICMEMORY_API_KEY,
+	});
 	const context: ApiContext = {
 		db: c.get("db"),
 		auth: c.get("auth"),
@@ -260,7 +265,13 @@ app.use("/*", async (c, next) => {
 		encryptionKey: ENV.CREDENTIALS_ENCRYPTION_KEY,
 		osrmBaseUrl: ENV.OSRM_BASE_URL,
 		waitUntil: waitUntilFor(c),
+		atomicMemory:
+			atomicMemorySetup.status === "on" ? atomicMemorySetup.config : undefined,
 	};
+	if (atomicMemorySetup.status === "invalid")
+		c.get("log").set({
+			routeNotes: { config: "invalid", reason: atomicMemorySetup.reason },
+		});
 
 	const rpcResult = await rpcHandler.handle(c.req.raw, {
 		prefix: RPC_PREFIX,

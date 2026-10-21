@@ -47,6 +47,13 @@ export const server = Cloudflare.Worker("server", {
 		...(process.env.DEMO_RESET_SECRET
 			? { DEMO_RESET_SECRET: Config.Redacted("DEMO_RESET_SECRET") }
 			: {}),
+		// Unset means route notes stay switched off.
+		...(process.env.ATOMICMEMORY_API_URL && process.env.ATOMICMEMORY_API_KEY
+			? {
+					ATOMICMEMORY_API_URL: Config.String("ATOMICMEMORY_API_URL"),
+					ATOMICMEMORY_API_KEY: Config.Redacted("ATOMICMEMORY_API_KEY"),
+				}
+			: {}),
 		BETTER_AUTH_URL: Config.String("BETTER_AUTH_URL"),
 		CREDENTIALS_ENCRYPTION_KEY: Config.Redacted("CREDENTIALS_ENCRYPTION_KEY"),
 		OSRM_BASE_URL: Config.String("OSRM_BASE_URL"),

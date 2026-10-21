@@ -1,3 +1,4 @@
+import type { RouteReviewPlaceId } from "@hack-the-andes-project/business/route-review/places";
 import { type QueryClient, queryOptions } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { ROUTE_REVIEW_QUERY_KEY } from "@/constants";
@@ -23,6 +24,24 @@ export function useRouteReviewQueries() {
 			queryOptions({
 				queryKey: [...ROUTE_REVIEW_QUERY_KEY, "planned-trips", scope, id],
 				queryFn: () => routeReviewClient.trips.get({ id }),
+			}),
+		routeNote: (
+			originPlaceId: RouteReviewPlaceId,
+			destinationPlaceId: RouteReviewPlaceId,
+		) =>
+			queryOptions({
+				queryKey: [
+					...ROUTE_REVIEW_QUERY_KEY,
+					"route-note",
+					scope,
+					originPlaceId,
+					destinationPlaceId,
+				],
+				queryFn: () =>
+					routeReviewClient.routeNotes.get({
+						originPlaceId,
+						destinationPlaceId,
+					}),
 			}),
 	};
 }

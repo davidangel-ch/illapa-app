@@ -77,6 +77,8 @@ Set these values on each app in Dokploy for its environment. The images do not r
 | `TILES_API_URL` | yes | origin of the tiles backend (`services/tiles`), proxied to engineers under `/tiles-api/*` (only `/tiles/*`, `/capas`, `/salud`) |
 | `WEATHER_API_URL` | yes | origin of the weather backend (`services/weather`), proxied to engineers under `/weather-api/*` (only `/api/*`) |
 | `DEMO_RESET_SECRET` | no | at least 32 characters; leave it unset to keep `POST /api/demo/reset` off |
+| `ATOMICMEMORY_API_URL` | no | `https://api.atomicstrata.ai`; with `ATOMICMEMORY_API_KEY` it turns on the operators' route notes |
+| `ATOMICMEMORY_API_KEY` | no | Atomic Memory Cloud project API key; leave either value unset to keep route notes off |
 | `SERVICE_VERSION` | no | |
 
 ### scraper

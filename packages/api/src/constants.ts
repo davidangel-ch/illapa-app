@@ -77,6 +77,14 @@ export const DEMO_CONNECTION_REMOVE_FORBIDDEN_MESSAGE =
 	"La cuenta demo no permite eliminar conexiones.";
 export const DEMO_PREPARE_FORBIDDEN_MESSAGE =
 	"Esta acción solo está disponible para la cuenta demo.";
+export const ROUTE_NOTE_MEMORY_TIMEOUT_MS = 4000;
+export const MAX_ROUTE_NOTE_LENGTH_CHARS = 280;
+export const ROUTE_NOTE_MEMORY_OFF_MESSAGE =
+	"Las notas de ruta no están activadas en este servidor.";
+export const ROUTE_NOTE_NOT_SAVED_MESSAGE =
+	"No pudimos confirmar que Atomic Memory guardó la nota. Vuelve a cargar la página para comprobarla antes de guardarla otra vez.";
+export const ROUTE_NOTE_NOT_REMOVED_MESSAGE =
+	"No pudimos confirmar que Atomic Memory borró la nota. Vuelve a cargar la página para comprobarla.";
 export const DEFAULT_RISK_HORIZON_HOURS = 24;
 export const DEFAULT_RISK_SEGMENT_LIMIT_ROWS = 2000;
 export const MAX_RISK_SEGMENT_LIMIT_ROWS = 10_000;
